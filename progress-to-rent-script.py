@@ -13,20 +13,30 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 url = f"https://discord.com/api/v9/applications/{APPL_ID}/users/{USER_ID}/identities/0/profile"
 
-def send_rent_update(dayProgress, dayMax):
+def send_rent_update(dayProgress, dayMax, progressTitle="Months to Rent", progressDescription="Working hard..."):
     data = {
         "username":"Nilo",
         "data": {
             "dynamic": [
                 {
                     "type": 2,
-                    "name": "dayProgress",
-                    "value": dayProgress
+                    "name": "dayMax",
+                    "value": dayMax
+                },
+                {
+                    "type": 1,
+                    "name": "progressTitle",
+                    "value": progressTitle
+                },
+                {
+                    "type": 1,
+                    "name": "progressDescription",
+                    "value": progressDescription
                 },
                 {
                     "type": 2,
-                    "name": "dayMax",
-                    "value": dayMax
+                    "name": "dayProgress",
+                    "value": dayProgress
                 }
             ]
         }
@@ -40,6 +50,8 @@ def send_rent_update(dayProgress, dayMax):
 
     requests.patch(url, headers=headers, json=data)
 
+timeUnit = "Months"
+
 born_year = 2008
 born_month = 3
 
@@ -49,10 +61,14 @@ start = date(born_year, born_month, 1)
 end_today = date.today()
 end_rent = date(born_year + rent_age, born_month, 1)
 
-rentProgress = relativedelta(end_today, start)
-rentMax = relativedelta(end_rent, start)
+if timeUnit == "Days":
+    progress = (end_today - start).days
+    progressMax = (end_rent - start).days
+else:
+    rentProgress = relativedelta(end_today, start)
+    rentMax = relativedelta(end_rent, start)
 
-monthsProgress = rentProgress.months + rentProgress.years * 12
-monthsMax = rentMax.months + rentMax.years * 12
+    progress = rentProgress.months + rentProgress.years * 12
+    progressMax = rentMax.months + rentMax.years * 12
 
-send_rent_update(monthsProgress, monthsMax)
+send_rent_update(progress, progressMax, progressTitle=f"{timeUnit} to Rent")
