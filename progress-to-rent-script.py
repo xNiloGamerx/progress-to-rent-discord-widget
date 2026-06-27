@@ -1,7 +1,7 @@
 import requests
 import os
 
-from datetime import date
+from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 
 from dotenv import load_dotenv
@@ -48,7 +48,9 @@ def send_rent_update(dayProgress, dayMax, progressTitle="Months to Rent", progre
         "User-Agent": "DiscordBot (https://github.com/discord/discord-api-docs, 1.0.0)"
     }
 
-    requests.patch(url, headers=headers, json=data)
+    response = requests.patch(url, headers=headers, json=data)
+    print(f"{datetime.now()} | {response.status_code}: {response.text if response.text else "Kein Response Text!"}")
+
 
 timeUnit = "Months"
 
